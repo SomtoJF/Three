@@ -70,6 +70,7 @@ const moonmaterial = new THREE.MeshStandardMaterial({
   normalMap: moonSurfaceTexture,
 });
 const moon = new THREE.Mesh(moongeometry, moonmaterial);
+moon.position.set(-20, 10, 20);
 scene.add(moon);
 
 function animate() {
