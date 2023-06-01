@@ -18,10 +18,13 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
-// Instantiate new geometry which represents shapes
+// Instantiate new torus geometry which represents shapes
 const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
 // There is also the MeshBasicMaterial which doesnt need any lighting
-const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
+const material = new THREE.MeshBasicMaterial({
+  color: 0xff6347,
+  wireframe: true,
+});
 const torus = new THREE.Mesh(geometry, material);
 scene.add(torus);
 
@@ -31,8 +34,10 @@ pointLight.position.set(20, 20, 20);
 
 const lightHelper = new THREE.PointLightHelper(pointLight);
 
-const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(pointLight, lightHelper);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+const gridHelper = new THREE.GridHelper(200, 50);
+
+scene.add(pointLight, ambientLight, lightHelper);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function addStars() {
@@ -42,21 +47,38 @@ function addStars() {
 
   const [x, y, z] = Array(3)
     .fill()
-    .map(() => THREE.MathUtils.randFloatSpread(100));
+    .map(() => THREE.MathUtils.randFloatSpread(200));
   star.position.set(x, y, z);
   scene.add(star);
 }
 
-Array(200).fill().forEach(addStars);
+Array(300).fill().forEach(addStars);
 
-// const spaceTexture = new THREE.TextureLoader().load("./images/space.jpg");
-// scene.background = spaceTexture;
+const spaceTexture = new THREE.TextureLoader().load("./images/space.jpg");
+scene.background = spaceTexture;
+
+// Instantiate new sphere material for the moon
+const moongeometry = new THREE.SphereGeometry(3, 32, 32);
+
+const moonTexture = new THREE.TextureLoader().load("./images/moon.jpg");
+const moonSurfaceTexture = new THREE.TextureLoader().load(
+  "./images/normal.jpg"
+);
+
+const moonmaterial = new THREE.MeshStandardMaterial({
+  map: moonTexture,
+  normalMap: moonSurfaceTexture,
+});
+const moon = new THREE.Mesh(moongeometry, moonmaterial);
+scene.add(moon);
 
 function animate() {
   requestAnimationFrame(animate);
   torus.rotation.x += 0.01;
   torus.rotation.y += 0.005;
   torus.rotation.z += 0.01;
+
+  moon.rotation.y += 0.008;
 
   controls.update();
   renderer.render(scene, camera);
