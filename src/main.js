@@ -128,14 +128,15 @@ moon.castShadow = true;
 scene.add(moon);
 
 // Import satellite from blender
+let satellite = null;
 const loader = new GLTFLoader();
 loader.load(
   "../models/39-satellite/satalite.glb",
   function (gltf) {
     console.log(gltf);
-    const satellite = gltf.scene;
+    satellite = gltf.scene;
     satellite.position.set(-5, 5, 10);
-    satellite.rotation.y = 15;
+    satellite.rotation.y = 180;
     satellite.scale.x = 0.1;
     satellite.scale.y = 0.1;
     satellite.scale.z = 0.1;
@@ -159,11 +160,17 @@ function animate() {
 
   moon.rotation.y += 0.008;
 
-  let r = 15; // radius
+  let r = 17; // radius
   let v = 2; // velocity
 
   moon.position.x = r * Math.cos(v * t);
   moon.position.z = r * Math.sin(v * t);
+
+  satellite.position.x = 10 * Math.cos(1 * t);
+  satellite.position.z = 10 * Math.sin(1 * t);
+  satellite.position.y = 10 * Math.cos(1 * t);
+  satellite.rotation.y += 0.0005;
+  satellite.castShadow = true;
 
   camera.position.x -= 0.05;
   camera.rotation.x += 0.05;
