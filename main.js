@@ -98,14 +98,14 @@ moon.position.set(-10, 5, 10);
 scene.add(moon);
 
 // galaxy starfield
-const galaxyStarfield = new THREE.Mesh(
-  new THREE.SphereGeometry(200, 64, 64),
-  new THREE.MeshBasicMaterial({
-    map: new THREE.TextureLoader().load("./images/galaxy_starfield.png"),
-    side: THREE.BackSide,
-  })
-);
-scene.add(galaxyStarfield);
+// const galaxyStarfield = new THREE.Mesh(
+//   new THREE.SphereGeometry(200, 64, 64),
+//   new THREE.MeshBasicMaterial({
+//     map: new THREE.TextureLoader().load("./images/galaxy_starfield.png"),
+//     side: THREE.BackSide,
+//   })
+// );
+// scene.add(galaxyStarfield);
 
 let t = 0;
 function animate() {
