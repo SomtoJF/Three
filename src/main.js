@@ -23,12 +23,12 @@ camera.position.setZ(50);
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
-const earthTexture = new THREE.TextureLoader().load("./images/earth.jpg");
+const earthTexture = new THREE.TextureLoader().load("../images/earth.jpg");
 const earthSurface = new THREE.TextureLoader().load(
   "https://2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s640/elev_bump_4k.jpg"
 );
 const earthSpecularMap = new THREE.TextureLoader().load(
-  "./images/earthSpecularMap.png"
+  "../images/earthSpecularMap.png"
 );
 // There is also the MeshBasicMaterial which doesnt need any lighting
 const material = new THREE.MeshPhongMaterial({
@@ -43,7 +43,7 @@ earth.castShadow = true;
 scene.add(earth);
 
 // Create spere geometry to hold the clouds
-const cloudsTexture = new THREE.TextureLoader().load("./images/clouds.png");
+const cloudsTexture = new THREE.TextureLoader().load("../images/clouds.png");
 const clouds = new THREE.Mesh(
   new THREE.SphereGeometry(9.1, 60, 60),
   new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
@@ -112,9 +112,9 @@ Array(500).fill().forEach(addStars);
 // Instantiate new sphere material for the moon
 const moongeometry = new THREE.SphereGeometry(2, 32, 32);
 
-const moonTexture = new THREE.TextureLoader().load("./images/moon.jpg");
+const moonTexture = new THREE.TextureLoader().load("../images/moon.jpg");
 const moonSurfaceTexture = new THREE.TextureLoader().load(
-  "./images/normal.jpg"
+  "../images/normal.jpg"
 );
 
 const moonmaterial = new THREE.MeshStandardMaterial({
@@ -130,7 +130,7 @@ scene.add(moon);
 // const galaxyStarfield = new THREE.Mesh(
 //   new THREE.SphereGeometry(200, 64, 64),
 //   new THREE.MeshBasicMaterial({
-//     map: new THREE.TextureLoader().load("./images/galaxy_starfield.png"),
+//     map: new THREE.TextureLoader().load("../images/galaxy_starfield.png"),
 //     side: THREE.BackSide,
 //   })
 // );
