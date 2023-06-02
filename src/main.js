@@ -2,6 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as POSTPROCESSING from "postprocessing";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
@@ -122,19 +123,29 @@ const moonmaterial = new THREE.MeshStandardMaterial({
   normalMap: moonSurfaceTexture,
 });
 const moon = new THREE.Mesh(moongeometry, moonmaterial);
-moon.position.set(-10, 5, 10);
+moon.position.set(-10, 2, 10);
 moon.castShadow = true;
 scene.add(moon);
 
-// galaxy starfield
-// const galaxyStarfield = new THREE.Mesh(
-//   new THREE.SphereGeometry(200, 64, 64),
-//   new THREE.MeshBasicMaterial({
-//     map: new THREE.TextureLoader().load("../images/galaxy_starfield.png"),
-//     side: THREE.BackSide,
-//   })
-// );
-// scene.add(galaxyStarfield);
+// Import satellite from blender
+const loader = new GLTFLoader();
+loader.load(
+  "../models/39-satellite/satalite.glb",
+  function (gltf) {
+    console.log(gltf);
+    const satellite = gltf.scene;
+    satellite.position.set(-5, 5, 10);
+    satellite.rotation.y = 15;
+    satellite.scale.x = 0.1;
+    satellite.scale.y = 0.1;
+    satellite.scale.z = 0.1;
+    scene.add(satellite);
+  },
+  undefined,
+  function (error) {
+    console.error(error);
+  }
+);
 
 let t = 0;
 function animate() {
@@ -148,8 +159,11 @@ function animate() {
 
   moon.rotation.y += 0.008;
 
-  moon.position.x = 15 * Math.cos(t) + 0;
-  moon.position.z = 15 * Math.sin(t) + 0;
+  let r = 15; // radius
+  let v = 2; // velocity
+
+  moon.position.x = r * Math.cos(v * t);
+  moon.position.z = r * Math.sin(v * t);
 
   camera.position.x -= 0.05;
   camera.rotation.x += 0.05;
