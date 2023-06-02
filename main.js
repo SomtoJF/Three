@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as POSTPROCESSING from "postprocessing";
 
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
@@ -16,7 +17,9 @@ const renderer = new THREE.WebGLRenderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+camera.position.setZ(50);
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
@@ -35,6 +38,8 @@ const material = new THREE.MeshPhongMaterial({
   specular: new THREE.Color("grey"),
 });
 const earth = new THREE.Mesh(geometry, material);
+earth.receiveShadow = true;
+earth.castShadow = true;
 scene.add(earth);
 
 // Create spere geometry to hold the clouds
@@ -46,22 +51,48 @@ const clouds = new THREE.Mesh(
 scene.add(clouds);
 
 // Instantiate the pointlight and set its position on the x,y and z axes
-const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(100, 5, 0);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+directionalLight.position.set(300, 5, 0);
+directionalLight.target.position.set(0, 0, 0);
+directionalLight.castShadow = true;
 
-const lightHelper = new THREE.PointLightHelper(pointLight);
+const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
 const gridHelper = new THREE.GridHelper(200, 50);
 
 // Create the sun
 const sun = new THREE.Mesh(
-  new THREE.SphereGeometry(20, 60, 60),
-  new THREE.MeshBasicMaterial({ color: 0xfdb813 })
+  new THREE.SphereGeometry(50, 60, 60),
+  new THREE.MeshBasicMaterial({
+    color: 0xfdb813,
+    visible: true,
+    lightMapIntensity: 1.3,
+  })
 );
-sun.position.set(100, 5, 0);
+sun.position.set(300, 5, 0);
+const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
+  resolutionScale: 0.5,
+  density: 0.6,
+  decay: 0.95,
+  weight: 0.9,
+  samples: 100,
+});
 
-scene.add(pointLight, ambientLight, lightHelper, sun);
+const renderPass = new POSTPROCESSING.RenderPass(scene, camera);
+const effectPass = new POSTPROCESSING.EffectPass(camera, godRaysEffect);
+effectPass.renderToScreen = true;
+const composer = new POSTPROCESSING.EffectComposer(renderer);
+composer.addPass(renderPass);
+composer.addPass(effectPass);
+
+scene.add(
+  directionalLight,
+  directionalLight.target,
+  // lightHelper,
+  sun,
+  ambientLight
+);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function addStars() {
@@ -78,9 +109,6 @@ function addStars() {
 
 Array(500).fill().forEach(addStars);
 
-// const spaceTexture = new THREE.TextureLoader().load("./images/space.jpg");
-// scene.background = spaceTexture;
-
 // Instantiate new sphere material for the moon
 const moongeometry = new THREE.SphereGeometry(2, 32, 32);
 
@@ -95,6 +123,7 @@ const moonmaterial = new THREE.MeshStandardMaterial({
 });
 const moon = new THREE.Mesh(moongeometry, moonmaterial);
 moon.position.set(-10, 5, 10);
+moon.castShadow = true;
 scene.add(moon);
 
 // galaxy starfield
@@ -110,6 +139,7 @@ scene.add(moon);
 let t = 0;
 function animate() {
   t += 0.005;
+  composer.render(0.1);
   requestAnimationFrame(animate);
   earth.rotation.y += 0.005;
 
@@ -120,6 +150,9 @@ function animate() {
 
   moon.position.x = 15 * Math.cos(t) + 0;
   moon.position.z = 15 * Math.sin(t) + 0;
+
+  camera.position.x -= 0.05;
+  camera.rotation.x += 0.05;
 
   controls.update();
   renderer.render(scene, camera);
