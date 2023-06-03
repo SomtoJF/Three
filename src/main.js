@@ -57,8 +57,6 @@ directionalLight.position.set(300, 5, 0);
 directionalLight.target.position.set(0, 0, 0);
 directionalLight.castShadow = true;
 
-const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
 const gridHelper = new THREE.GridHelper(200, 50);
 
@@ -90,7 +88,7 @@ composer.addPass(effectPass);
 scene.add(
   directionalLight,
   directionalLight.target,
-  // lightHelper,
+  // gridHelper,
   sun,
   ambientLight
 );
@@ -130,16 +128,20 @@ scene.add(moon);
 // Import satellite from blender
 let satellite = null;
 const loader = new GLTFLoader();
-loader.load(
+await loader.load(
   "../models/39-satellite/satalite.glb",
   function (gltf) {
-    console.log(gltf);
     satellite = gltf.scene;
     satellite.position.set(-5, 5, 10);
     satellite.rotation.y = 180;
-    satellite.scale.x = 0.1;
     satellite.scale.y = 0.1;
     satellite.scale.z = 0.1;
+    satellite.scale.x = 0.1;
+
+    const panelTexture = new THREE.TextureLoader().load(
+      "../models/39-satellite/textures/TexturesCom_SolarCells_2K_albedo.tif"
+    );
+
     scene.add(satellite);
   },
   undefined,
@@ -170,10 +172,9 @@ function animate() {
   satellite.position.z = 10 * Math.sin(1 * t);
   satellite.position.y = 10 * Math.cos(1 * t);
   satellite.rotation.y += 0.0005;
-  satellite.castShadow = true;
 
-  camera.position.x -= 0.05;
-  camera.rotation.x += 0.05;
+  camera.position.x -= 0.01;
+  camera.rotation.x += 0.01;
 
   controls.update();
   renderer.render(scene, camera);
