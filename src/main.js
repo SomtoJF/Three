@@ -3,6 +3,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as POSTPROCESSING from "postprocessing";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import createMercury from "./models/mercury";
+import createVenus from "./models/venus";
 
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
@@ -21,6 +23,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 camera.position.setZ(50);
+
+// PLANETS
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
@@ -41,7 +45,14 @@ const material = new THREE.MeshPhongMaterial({
 const earth = new THREE.Mesh(geometry, material);
 earth.receiveShadow = true;
 earth.castShadow = true;
-scene.add(earth);
+
+const mercury = createMercury();
+mercury.position.set(200, 5, 0);
+
+const venus = createVenus();
+venus.position.set(180, 5, 0);
+
+scene.add(earth, mercury, venus);
 
 // Create spere geometry to hold the clouds
 const cloudsTexture = new THREE.TextureLoader().load("../images/clouds.png");
@@ -156,6 +167,8 @@ function animate() {
   composer.render(0.1);
   requestAnimationFrame(animate);
   earth.rotation.y += 0.005;
+  mercury.rotation.y += 0.005;
+  venus.rotation.y += 0.005;
 
   clouds.rotation.x += 0.0005;
   clouds.rotation.y += 0.006;
