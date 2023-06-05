@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import gsap from "gsap";
 import createMercury from "./models/mercury";
 import createVenus from "./models/venus";
+import displayControls from "./ui";
 
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
@@ -26,6 +27,12 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 camera.position.setZ(50);
 
 // PLANETS
+const heavenlyBodies = [
+  { name: "Sun", x: 300, y: 5, z: 0 },
+  { name: "Mercury", x: 200, y: 5, z: 0 },
+  { name: "Venus", x: 180, y: 5, z: 0 },
+  { name: "Earth", x: 0, y: 0, z: 0 },
+];
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
@@ -90,17 +97,48 @@ const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
   samples: 100,
 });
 
-window.addEventListener("click", () => {
-  if (controls.target.x !== sun.position.x) {
-    gsap.to(camera.position, {
-      x: 500,
-      y: 100,
-      duration: 2,
-      onUpdate: () => {
-        camera.lookAt(0, 0, 0);
-      },
-    });
-    controls.target.set(300, 5, 0);
+window.addEventListener("keyup", (e) => {
+  console.log(e.key);
+  if (e.key === "ArrowRight") {
+    for (let i = heavenlyBodies.length - 1; i >= 0; i--) {
+      const thisBody = heavenlyBodies[i];
+      if (thisBody.x > controls.target.x) {
+        gsap.to(camera.position, {
+          x:
+            thisBody.name == "Sun"
+              ? heavenlyBodies[i].x + 100
+              : heavenlyBodies[i].x + 10,
+          y: thisBody.name == "Sun" ? 100 : 5,
+          duration: 3,
+          onUpdate: () => {
+            camera.lookAt(0, 0, 0);
+          },
+        });
+        controls.target.set(thisBody.x, thisBody.y, thisBody.z);
+        break;
+      }
+    }
+  }
+
+  if (e.key === "ArrowLeft") {
+    for (let i = 0; i < heavenlyBodies.length; i++) {
+      const thisBody = heavenlyBodies[i];
+      if (thisBody.x < controls.target.x) {
+        gsap.to(camera.position, {
+          x:
+            thisBody.name == "Sun"
+              ? heavenlyBodies[i].x + 100
+              : heavenlyBodies[i].x + 10,
+          y: thisBody.name == "Sun" ? 100 : 5,
+          duration: 3,
+          onUpdate: () => {
+            camera.lookAt(0, 0, 0);
+          },
+        });
+        controls.target.set(thisBody.x, thisBody.y, thisBody.z);
+        break;
+      }
+    }
   }
 });
 
@@ -164,10 +202,6 @@ await loader.load(
     satellite.scale.z = 0.1;
     satellite.scale.x = 0.1;
 
-    const panelTexture = new THREE.TextureLoader().load(
-      "../models/39-satellite/textures/TexturesCom_SolarCells_2K_albedo.tif"
-    );
-
     scene.add(satellite);
   },
   undefined,
@@ -175,6 +209,7 @@ await loader.load(
     console.error(error);
   }
 );
+// displayControls();
 
 let t = 0;
 function animate() {
