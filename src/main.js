@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as POSTPROCESSING from "postprocessing";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import gsap from "gsap";
 import createMercury from "./models/mercury";
 import createVenus from "./models/venus";
 
@@ -87,6 +88,20 @@ const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
   decay: 0.95,
   weight: 0.9,
   samples: 100,
+});
+
+window.addEventListener("click", () => {
+  if (controls.target.x !== sun.position.x) {
+    gsap.to(camera.position, {
+      x: 500,
+      y: 100,
+      duration: 2,
+      onUpdate: () => {
+        camera.lookAt(0, 0, 0);
+      },
+    });
+    controls.target.set(300, 5, 0);
+  }
 });
 
 const renderPass = new POSTPROCESSING.RenderPass(scene, camera);
@@ -186,9 +201,10 @@ function animate() {
   satellite.position.y = 10 * Math.cos(1 * t);
   satellite.rotation.y += 0.0005;
 
-  camera.position.x -= 0.01;
-  camera.rotation.x += 0.01;
-
+  if (controls.target.x === 0 && controls.target.y === 0) {
+    camera.position.x -= 0.01;
+    camera.rotation.x += 0.01;
+  }
   controls.update();
   renderer.render(scene, camera);
 }
