@@ -116,35 +116,26 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
 const gridHelper = new THREE.GridHelper(200, 50);
 
 // Create the sun
-let sun = null;
-const sunLoader = new GLTFLoader();
-await sunLoader.load(
-  "../models/sun.glb",
-  function (gltf) {
-    sun = gltf.scene;
-    sun.position.set(300, 5, 0);
-    sun.scale.y = 0.06;
-    sun.scale.z = 0.06;
-    sun.scale.x = 0.06;
-    scene.add(sun);
-  },
-  undefined,
-  function (error) {
-    console.error(error);
-  }
+const sunTexture = new THREE.TextureLoader().load("../images/sun.jpg");
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(50, 60, 60),
+  new THREE.MeshBasicMaterial({
+    color: 0xfdb813,
+    visible: true,
+    lightMapIntensity: 1.3,
+    map: sunTexture,
+  })
 );
+sun.position.set(300, 5, 0);
+scene.add(sun);
 
-const godRaysEffect = new POSTPROCESSING.GodRaysEffect(
-  camera,
-  sun != null ? sun : mercury,
-  {
-    resolutionScale: 0.5,
-    density: 0.6,
-    decay: 0.95,
-    weight: 0.9,
-    samples: 100,
-  }
-);
+const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
+  resolutionScale: 0.5,
+  density: 0.6,
+  decay: 0.95,
+  weight: 0.9,
+  samples: 100,
+});
 
 window.addEventListener("keyup", (e) => {
   console.log(e.key);
