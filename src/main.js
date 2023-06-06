@@ -74,7 +74,7 @@ jupiter.position.set(-150, 5, 0);
 
 let saturn = null;
 const saturnLoader = new GLTFLoader();
-await saturnLoader.load(
+saturnLoader.load(
   "../models/saturn.glb",
   function (gltf) {
     saturn = gltf.scene;
@@ -223,7 +223,7 @@ scene.add(moonObj);
 // Import satellite from blender
 let satellite = null;
 const loader = new GLTFLoader();
-await loader.load(
+loader.load(
   "../models/39-satellite/satalite.glb",
   function (gltf) {
     satellite = gltf.scene;
