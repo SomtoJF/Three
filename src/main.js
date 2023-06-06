@@ -6,7 +6,9 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import gsap from "gsap";
 import createMercury from "./models/mercury";
 import createVenus from "./models/venus";
-import displayControls from "./ui";
+import createMars from "./models/mars";
+import createJupiter from "./models/jupiter";
+import createSaturn from "./models/saturn";
 
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
@@ -28,10 +30,12 @@ camera.position.setZ(50);
 
 // PLANETS
 const heavenlyBodies = [
-  { name: "Sun", x: 300, y: 5, z: 0 },
-  { name: "Mercury", x: 200, y: 5, z: 0 },
-  { name: "Venus", x: 180, y: 5, z: 0 },
+  { name: "Mercury", x: 100, y: 5, z: 0 },
+  { name: "Venus", x: 50, y: 5, z: 0 },
   { name: "Earth", x: 0, y: 0, z: 0 },
+  { name: "Mars", x: -50, y: 5, z: 0 },
+  { name: "Jupiter", x: -150, y: 5, z: 0 },
+  { name: "Saturn", x: -250, y: 0, z: 0 },
 ];
 
 // Instantiate new earth geometry which represents shapes
@@ -55,12 +59,36 @@ earth.receiveShadow = true;
 earth.castShadow = true;
 
 const mercury = createMercury();
-mercury.position.set(200, 5, 0);
+mercury.position.set(100, 5, 0);
 
 const venus = createVenus();
-venus.position.set(180, 5, 0);
+venus.position.set(50, 5, 0);
 
-scene.add(earth, mercury, venus);
+const mars = createMars();
+mars.position.set(-50, 5, 0);
+
+const jupiter = createJupiter();
+jupiter.position.set(-150, 5, 0);
+
+let saturn = null;
+const saturnLoader = new GLTFLoader();
+await saturnLoader.load(
+  "../models/saturn.glb",
+  function (gltf) {
+    saturn = gltf.scene;
+    saturn.position.set(-250, 0, 0);
+    saturn.scale.y = 0.04;
+    saturn.scale.z = 0.04;
+    saturn.scale.x = 0.04;
+    scene.add(saturn);
+  },
+  undefined,
+  function (error) {
+    console.error(error);
+  }
+);
+
+scene.add(earth, mercury, venus, mars, jupiter);
 
 // Create spere geometry to hold the clouds
 const cloudsTexture = new THREE.TextureLoader().load("../images/clouds.png");
@@ -104,15 +132,9 @@ window.addEventListener("keyup", (e) => {
       const thisBody = heavenlyBodies[i];
       if (thisBody.x > controls.target.x) {
         gsap.to(camera.position, {
-          x:
-            thisBody.name == "Sun"
-              ? heavenlyBodies[i].x + 100
-              : heavenlyBodies[i].x + 10,
-          y: thisBody.name == "Sun" ? 100 : 5,
+          x: heavenlyBodies[i].x,
+          y: 5,
           duration: 3,
-          onUpdate: () => {
-            camera.lookAt(0, 0, 0);
-          },
         });
         controls.target.set(thisBody.x, thisBody.y, thisBody.z);
         break;
@@ -125,15 +147,9 @@ window.addEventListener("keyup", (e) => {
       const thisBody = heavenlyBodies[i];
       if (thisBody.x < controls.target.x) {
         gsap.to(camera.position, {
-          x:
-            thisBody.name == "Sun"
-              ? heavenlyBodies[i].x + 100
-              : heavenlyBodies[i].x + 10,
-          y: thisBody.name == "Sun" ? 100 : 5,
+          x: heavenlyBodies[i].x + 10,
+          y: 5,
           duration: 3,
-          onUpdate: () => {
-            camera.lookAt(0, 0, 0);
-          },
         });
         controls.target.set(thisBody.x, thisBody.y, thisBody.z);
         break;
@@ -219,6 +235,8 @@ function animate() {
   earth.rotation.y += 0.005;
   mercury.rotation.y += 0.005;
   venus.rotation.y += 0.005;
+  mars.rotation.y += 0.005;
+  jupiter.rotation.y += 0.001;
 
   clouds.rotation.x += 0.0005;
   clouds.rotation.y += 0.006;
