@@ -8,8 +8,8 @@ import createMercury from "./models/mercury";
 import createVenus from "./models/venus";
 import createMars from "./models/mars";
 import createJupiter from "./models/jupiter";
-import createSaturn from "./models/saturn";
-
+import createUranus from "./models/uranus";
+import createNeptune from "./models/neptune";
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -36,6 +36,8 @@ const heavenlyBodies = [
   { name: "Mars", x: -50, y: 5, z: 0 },
   { name: "Jupiter", x: -150, y: 5, z: 0 },
   { name: "Saturn", x: -250, y: 0, z: 0 },
+  { name: "Uranus", x: -320, y: 0, z: 0 },
+  { name: "Neptune", x: -370, y: 0, z: 0 },
 ];
 
 // Instantiate new earth geometry which represents shapes
@@ -88,7 +90,13 @@ await saturnLoader.load(
   }
 );
 
-scene.add(earth, mercury, venus, mars, jupiter);
+const uranus = createUranus();
+uranus.position.set(-320, 0, 0);
+
+const neptune = createNeptune();
+neptune.position.set(-370, 0, 0);
+
+scene.add(earth, mercury, venus, mars, jupiter, uranus, neptune);
 
 // Create spere geometry to hold the clouds
 const cloudsTexture = new THREE.TextureLoader().load("../images/clouds.png");
@@ -108,22 +116,35 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
 const gridHelper = new THREE.GridHelper(200, 50);
 
 // Create the sun
-const sun = new THREE.Mesh(
-  new THREE.SphereGeometry(50, 60, 60),
-  new THREE.MeshBasicMaterial({
-    color: 0xfdb813,
-    visible: true,
-    lightMapIntensity: 1.3,
-  })
+let sun = null;
+const sunLoader = new GLTFLoader();
+await sunLoader.load(
+  "../models/sun.glb",
+  function (gltf) {
+    sun = gltf.scene;
+    sun.position.set(300, 5, 0);
+    sun.scale.y = 0.06;
+    sun.scale.z = 0.06;
+    sun.scale.x = 0.06;
+    scene.add(sun);
+  },
+  undefined,
+  function (error) {
+    console.error(error);
+  }
 );
-sun.position.set(300, 5, 0);
-const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
-  resolutionScale: 0.5,
-  density: 0.6,
-  decay: 0.95,
-  weight: 0.9,
-  samples: 100,
-});
+
+const godRaysEffect = new POSTPROCESSING.GodRaysEffect(
+  camera,
+  sun != null ? sun : mercury,
+  {
+    resolutionScale: 0.5,
+    density: 0.6,
+    decay: 0.95,
+    weight: 0.9,
+    samples: 100,
+  }
+);
 
 window.addEventListener("keyup", (e) => {
   console.log(e.key);
@@ -169,7 +190,6 @@ scene.add(
   directionalLight,
   directionalLight.target,
   // gridHelper,
-  sun,
   ambientLight
 );
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -201,9 +221,13 @@ const moonmaterial = new THREE.MeshStandardMaterial({
   normalMap: moonSurfaceTexture,
 });
 const moon = new THREE.Mesh(moongeometry, moonmaterial);
-moon.position.set(-10, 2, 10);
+const moonObj = new THREE.Object3D();
+moonObj.position.set(0, 0, 0);
+moonObj.add(moon);
+moon.position.x = -15;
+moon.position.y = 2;
 moon.castShadow = true;
-scene.add(moon);
+scene.add(moonObj);
 
 // Import satellite from blender
 let satellite = null;
@@ -237,17 +261,14 @@ function animate() {
   venus.rotation.y += 0.005;
   mars.rotation.y += 0.005;
   jupiter.rotation.y += 0.001;
+  uranus.rotation.y += 0.001;
+  neptune.rotation.y += 0.001;
 
   clouds.rotation.x += 0.0005;
   clouds.rotation.y += 0.006;
 
   moon.rotation.y += 0.008;
-
-  let r = 17; // radius
-  let v = 2; // velocity
-
-  moon.position.x = r * Math.cos(v * t);
-  moon.position.z = r * Math.sin(v * t);
+  moonObj.rotation.y += 0.008;
 
   satellite.position.x = 10 * Math.cos(1 * t);
   satellite.position.z = 10 * Math.sin(1 * t);
