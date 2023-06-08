@@ -10,6 +10,15 @@ import createMars from "./models/mars";
 import createJupiter from "./models/jupiter";
 import createUranus from "./models/uranus";
 import createNeptune from "./models/neptune";
+import earthSpecular from "../images/earthSpecularMap.png";
+import earthTextureMap from "../images/earth.jpg";
+import saturnModel from "../models/saturn.glb?url";
+import satelliteModel from "../models/39-satellite/satalite.glb?url";
+import cloudstextureMap from "../images/clouds.png";
+import suntextureMap from "../images/sun.jpg";
+import moonTextureMap from "../images/moon.jpg";
+import moonSurfaceMap from "../images/normal.jpg";
+
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -42,13 +51,11 @@ const heavenlyBodies = [
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
-const earthTexture = new THREE.TextureLoader().load("../images/earth.jpg");
+const earthTexture = new THREE.TextureLoader().load(earthTextureMap);
 const earthSurface = new THREE.TextureLoader().load(
   "https://2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s640/elev_bump_4k.jpg"
 );
-const earthSpecularMap = new THREE.TextureLoader().load(
-  "../images/earthSpecularMap.png"
-);
+const earthSpecularMap = new THREE.TextureLoader().load(earthSpecular);
 // There is also the MeshBasicMaterial which doesnt need any lighting
 const material = new THREE.MeshPhongMaterial({
   map: earthTexture,
@@ -75,7 +82,7 @@ jupiter.position.set(-150, 5, 0);
 let saturn = null;
 const saturnLoader = new GLTFLoader();
 saturnLoader.load(
-  "../models/saturn.glb",
+  saturnModel,
   function (gltf) {
     saturn = gltf.scene;
     saturn.position.set(-250, 0, 0);
@@ -99,7 +106,7 @@ neptune.position.set(-370, 0, 0);
 scene.add(earth, mercury, venus, mars, jupiter, uranus, neptune);
 
 // Create spere geometry to hold the clouds
-const cloudsTexture = new THREE.TextureLoader().load("../images/clouds.png");
+const cloudsTexture = new THREE.TextureLoader().load(cloudstextureMap);
 const clouds = new THREE.Mesh(
   new THREE.SphereGeometry(9.1, 60, 60),
   new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
@@ -116,7 +123,7 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
 const gridHelper = new THREE.GridHelper(200, 50);
 
 // Create the sun
-const sunTexture = new THREE.TextureLoader().load("../images/sun.jpg");
+const sunTexture = new THREE.TextureLoader().load(suntextureMap);
 const sun = new THREE.Mesh(
   new THREE.SphereGeometry(50, 60, 60),
   new THREE.MeshBasicMaterial({
@@ -202,10 +209,8 @@ Array(500).fill().forEach(addStars);
 // Instantiate new sphere material for the moon
 const moongeometry = new THREE.SphereGeometry(2, 32, 32);
 
-const moonTexture = new THREE.TextureLoader().load("../images/moon.jpg");
-const moonSurfaceTexture = new THREE.TextureLoader().load(
-  "../images/normal.jpg"
-);
+const moonTexture = new THREE.TextureLoader().load(moonTextureMap);
+const moonSurfaceTexture = new THREE.TextureLoader().load(moonSurfaceMap);
 
 const moonmaterial = new THREE.MeshStandardMaterial({
   map: moonTexture,
@@ -224,7 +229,7 @@ scene.add(moonObj);
 let satellite = null;
 const loader = new GLTFLoader();
 loader.load(
-  "../models/39-satellite/satalite.glb",
+  satelliteModel,
   function (gltf) {
     satellite = gltf.scene;
     satellite.position.set(-5, 5, 10);

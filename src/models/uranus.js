@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import uranusTexture from "../../images/uranus.jpg";
 
 const createUranus = () => {
-  const texture = new THREE.TextureLoader().load("../../images/uranus.jpg");
+  const texture = new THREE.TextureLoader().load(uranusTexture);
   const geometry = new THREE.SphereGeometry(18, 30, 30);
   const material = new THREE.MeshStandardMaterial({
     map: texture,

@@ -1,9 +1,11 @@
 import * as THREE from "three";
+import venusTexture from "../../images/venus.jpg";
+import venusAtmosphereTexture from "../../images/venus_atmosphere.jpg";
 
 const createVenus = () => {
-  const texture = new THREE.TextureLoader().load("../../images/venus.jpg");
+  const texture = new THREE.TextureLoader().load(venusTexture);
   const atmosphereTexture = new THREE.TextureLoader().load(
-    "../../images/venus_atmosphere.jpg"
+    venusAtmosphereTexture
   );
   const geometry = new THREE.SphereGeometry(2.5, 30, 30);
   const material = new THREE.MeshStandardMaterial({

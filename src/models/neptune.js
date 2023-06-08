@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import neptuneTexture from "../../images/neptune.jpg";
 
 const createNeptune = () => {
-  const texture = new THREE.TextureLoader().load("../../images/neptune.jpg");
+  const texture = new THREE.TextureLoader().load(neptuneTexture);
   const geometry = new THREE.SphereGeometry(15, 30, 30);
   const material = new THREE.MeshStandardMaterial({
     map: texture,
