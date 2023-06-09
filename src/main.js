@@ -253,7 +253,7 @@ loader.load(
 
 // Controls
 const gui = new GUI();
-gui.add(controls.target, "x", -300, 300, 50).name("Navigate");
+gui.add(controls.target, "x", -450, 300, 50).name("Navigate");
 gui.add(camera.position, "z", 0, 100, 0.1).name("Camera Z-Index");
 const planetSizeFolder = gui.addFolder("Scale a Planet");
 const mercuryFolder = planetSizeFolder.addFolder("Mercury");
