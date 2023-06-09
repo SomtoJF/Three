@@ -1,5 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+
 #bg {
   position: fixed;
   left: 0px;
   top: 0px;
+}
+
+#info {
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  margin: 0px;
+  padding: 2.5% 0px;
+  overflow: hidden;
+  color: white;
+  display: flex;
+  flex-direction: column-reverse;
+  box-sizing: border-box;
+}
+
+#info > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif, sans-serif;
+  padding: 0px 5%;
 }

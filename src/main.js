@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as POSTPROCESSING from "postprocessing";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import gsap from "gsap";
+import { GUI } from "dat.gui";
 import createMercury from "./models/mercury";
 import createVenus from "./models/venus";
 import createMars from "./models/mars";
@@ -45,8 +46,8 @@ const heavenlyBodies = [
   { name: "Mars", x: -50, y: 5, z: 0 },
   { name: "Jupiter", x: -150, y: 5, z: 0 },
   { name: "Saturn", x: -250, y: 0, z: 0 },
-  { name: "Uranus", x: -320, y: 0, z: 0 },
-  { name: "Neptune", x: -370, y: 0, z: 0 },
+  { name: "Uranus", x: -350, y: 0, z: 0 },
+  { name: "Neptune", x: -400, y: 0, z: 0 },
 ];
 
 // Instantiate new earth geometry which represents shapes
@@ -90,6 +91,11 @@ saturnLoader.load(
     saturn.scale.z = 0.04;
     saturn.scale.x = 0.04;
     scene.add(saturn);
+
+    const saturnFolder = planetSizeFolder.addFolder("Saturn");
+    saturnFolder.add(saturn.scale, "x", 0, 0.1, 0.01);
+    saturnFolder.add(saturn.scale, "y", 0, 0.1, 0.01);
+    saturnFolder.add(saturn.scale, "z", 0, 0.1, 0.01);
   },
   undefined,
   function (error) {
@@ -98,11 +104,10 @@ saturnLoader.load(
 );
 
 const uranus = createUranus();
-uranus.position.set(-320, 0, 0);
+uranus.position.set(-350, 0, 0);
 
 const neptune = createNeptune();
-neptune.position.set(-370, 0, 0);
-
+neptune.position.set(-400, 0, 0);
 scene.add(earth, mercury, venus, mars, jupiter, uranus, neptune);
 
 // Create spere geometry to hold the clouds
@@ -245,7 +250,56 @@ loader.load(
     console.error(error);
   }
 );
-// displayControls();
+
+// Controls
+const gui = new GUI();
+gui.add(controls.target, "x", -300, 300, 50).name("Navigate");
+gui.add(camera.position, "z", 0, 100, 0.1).name("Camera Z-Index");
+const planetSizeFolder = gui.addFolder("Scale a Planet");
+const mercuryFolder = planetSizeFolder.addFolder("Mercury");
+mercuryFolder.add(mercury.scale, "x", 0, 3, 0.1);
+mercuryFolder.add(mercury.scale, "y", 0, 3, 0.1);
+mercuryFolder.add(mercury.scale, "z", 0, 3, 0.1);
+
+const venusFolder = planetSizeFolder.addFolder("Venus");
+venusFolder.add(venus.scale, "x", 0, 3, 0.1);
+venusFolder.add(venus.scale, "y", 0, 3, 0.1);
+venusFolder.add(venus.scale, "z", 0, 3, 0.1);
+
+const earthFolder = planetSizeFolder.addFolder("Earth");
+earthFolder.add(earth.scale, "x", 0, 3, 0.1);
+earthFolder.add(earth.scale, "y", 0, 3, 0.1);
+earthFolder.add(earth.scale, "z", 0, 3, 0.1);
+
+const marsFolder = planetSizeFolder.addFolder("Mars");
+marsFolder.add(mars.scale, "x", 0, 3, 0.1);
+marsFolder.add(mars.scale, "y", 0, 3, 0.1);
+marsFolder.add(mars.scale, "z", 0, 3, 0.1);
+
+const jupiterFolder = planetSizeFolder.addFolder("Jupiter");
+jupiterFolder.add(jupiter.scale, "x", 0, 3, 0.1);
+jupiterFolder.add(jupiter.scale, "y", 0, 3, 0.1);
+jupiterFolder.add(jupiter.scale, "z", 0, 3, 0.1);
+
+const uranusFolder = planetSizeFolder.addFolder("Uranus");
+uranusFolder.add(uranus.scale, "x", 0, 3, 0.1);
+uranusFolder.add(uranus.scale, "y", 0, 3, 0.1);
+uranusFolder.add(uranus.scale, "z", 0, 3, 0.1);
+
+const neptuneFolder = planetSizeFolder.addFolder("Neptune");
+neptuneFolder.add(neptune.scale, "x", 0, 3, 0.1);
+neptuneFolder.add(neptune.scale, "y", 0, 3, 0.1);
+neptuneFolder.add(neptune.scale, "z", 0, 3, 0.1);
+
+const wireframeFolder = gui.addFolder("wireframe");
+wireframeFolder.add(mercury.material, "wireframe").name("Mercury");
+wireframeFolder.add(venus.material, "wireframe").name("Venus");
+wireframeFolder.add(earth.material, "wireframe").name("Earth");
+wireframeFolder.add(moon.material, "wireframe").name("Moon");
+wireframeFolder.add(mars.material, "wireframe").name("Mars");
+wireframeFolder.add(jupiter.material, "wireframe").name("Jupiter");
+wireframeFolder.add(uranus.material, "wireframe").name("Uranus");
+wireframeFolder.add(neptune.material, "wireframe").name("Neptune");
 
 let t = 0;
 function animate() {
