@@ -23,13 +23,13 @@ import moonSurfaceMap from "../images/normal.jpg";
 // instantiate Scene, camera and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+	75,
+	window.innerWidth / window.innerHeight,
+	0.1,
+	1000
 );
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.getElementById("bg"),
+	canvas: document.getElementById("bg"),
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -40,29 +40,29 @@ camera.position.setZ(50);
 
 // PLANETS
 const heavenlyBodies = [
-  { name: "Mercury", x: 100, y: 5, z: 0 },
-  { name: "Venus", x: 50, y: 5, z: 0 },
-  { name: "Earth", x: 0, y: 0, z: 0 },
-  { name: "Mars", x: -50, y: 5, z: 0 },
-  { name: "Jupiter", x: -150, y: 5, z: 0 },
-  { name: "Saturn", x: -250, y: 0, z: 0 },
-  { name: "Uranus", x: -350, y: 0, z: 0 },
-  { name: "Neptune", x: -400, y: 0, z: 0 },
+	{ name: "Mercury", x: 100, y: 5, z: 0 },
+	{ name: "Venus", x: 50, y: 5, z: 0 },
+	{ name: "Earth", x: 0, y: 0, z: 0 },
+	{ name: "Mars", x: -50, y: 5, z: 0 },
+	{ name: "Jupiter", x: -150, y: 5, z: 0 },
+	{ name: "Saturn", x: -250, y: 0, z: 0 },
+	{ name: "Uranus", x: -350, y: 0, z: 0 },
+	{ name: "Neptune", x: -400, y: 0, z: 0 },
 ];
 
 // Instantiate new earth geometry which represents shapes
 const geometry = new THREE.SphereGeometry(9, 50, 50);
 const earthTexture = new THREE.TextureLoader().load(earthTextureMap);
 const earthSurface = new THREE.TextureLoader().load(
-  "https://2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s640/elev_bump_4k.jpg"
+	"https://2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s640/elev_bump_4k.jpg"
 );
 const earthSpecularMap = new THREE.TextureLoader().load(earthSpecular);
 // There is also the MeshBasicMaterial which doesnt need any lighting
 const material = new THREE.MeshPhongMaterial({
-  map: earthTexture,
-  bumpMap: earthSurface,
-  specularMap: earthSpecularMap,
-  specular: new THREE.Color("grey"),
+	map: earthTexture,
+	bumpMap: earthSurface,
+	specularMap: earthSpecularMap,
+	specular: new THREE.Color("grey"),
 });
 const earth = new THREE.Mesh(geometry, material);
 earth.receiveShadow = true;
@@ -83,24 +83,24 @@ jupiter.position.set(-150, 5, 0);
 let saturn = null;
 const saturnLoader = new GLTFLoader();
 saturnLoader.load(
-  saturnModel,
-  function (gltf) {
-    saturn = gltf.scene;
-    saturn.position.set(-250, 0, 0);
-    saturn.scale.y = 0.04;
-    saturn.scale.z = 0.04;
-    saturn.scale.x = 0.04;
-    scene.add(saturn);
+	saturnModel,
+	function (gltf) {
+		saturn = gltf.scene;
+		saturn.position.set(-250, 0, 0);
+		saturn.scale.y = 0.04;
+		saturn.scale.z = 0.04;
+		saturn.scale.x = 0.04;
+		scene.add(saturn);
 
-    const saturnFolder = planetSizeFolder.addFolder("Saturn");
-    saturnFolder.add(saturn.scale, "x", 0, 0.1, 0.01);
-    saturnFolder.add(saturn.scale, "y", 0, 0.1, 0.01);
-    saturnFolder.add(saturn.scale, "z", 0, 0.1, 0.01);
-  },
-  undefined,
-  function (error) {
-    console.error(error);
-  }
+		const saturnFolder = planetSizeFolder.addFolder("Saturn");
+		saturnFolder.add(saturn.scale, "x", 0, 0.1, 0.01);
+		saturnFolder.add(saturn.scale, "y", 0, 0.1, 0.01);
+		saturnFolder.add(saturn.scale, "z", 0, 0.1, 0.01);
+	},
+	undefined,
+	function (error) {
+		console.error(error);
+	}
 );
 
 const uranus = createUranus();
@@ -113,8 +113,8 @@ scene.add(earth, mercury, venus, mars, jupiter, uranus, neptune);
 // Create spere geometry to hold the clouds
 const cloudsTexture = new THREE.TextureLoader().load(cloudstextureMap);
 const clouds = new THREE.Mesh(
-  new THREE.SphereGeometry(9.1, 60, 60),
-  new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
+	new THREE.SphereGeometry(9.1, 60, 60),
+	new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
 );
 scene.add(clouds);
 
@@ -130,56 +130,56 @@ const gridHelper = new THREE.GridHelper(200, 50);
 // Create the sun
 const sunTexture = new THREE.TextureLoader().load(suntextureMap);
 const sun = new THREE.Mesh(
-  new THREE.SphereGeometry(50, 60, 60),
-  new THREE.MeshBasicMaterial({
-    color: 0xfdb813,
-    visible: true,
-    lightMapIntensity: 1.3,
-    map: sunTexture,
-  })
+	new THREE.SphereGeometry(50, 60, 60),
+	new THREE.MeshBasicMaterial({
+		color: 0xfdb813,
+		visible: true,
+		lightMapIntensity: 1.3,
+		map: sunTexture,
+	})
 );
 sun.position.set(300, 5, 0);
 scene.add(sun);
 
 const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
-  resolutionScale: 0.5,
-  density: 0.6,
-  decay: 0.95,
-  weight: 0.9,
-  samples: 100,
+	resolutionScale: 0.5,
+	density: 0.6,
+	decay: 0.95,
+	weight: 0.9,
+	samples: 100,
 });
 
 window.addEventListener("keyup", (e) => {
-  console.log(e.key);
-  if (e.key === "ArrowRight") {
-    for (let i = heavenlyBodies.length - 1; i >= 0; i--) {
-      const thisBody = heavenlyBodies[i];
-      if (thisBody.x > controls.target.x) {
-        gsap.to(camera.position, {
-          x: heavenlyBodies[i].x,
-          y: 5,
-          duration: 3,
-        });
-        controls.target.set(thisBody.x, thisBody.y, thisBody.z);
-        break;
-      }
-    }
-  }
+	console.log(e.key);
+	if (e.key === "ArrowRight") {
+		for (let i = heavenlyBodies.length - 1; i >= 0; i--) {
+			const thisBody = heavenlyBodies[i];
+			if (thisBody.x > controls.target.x) {
+				gsap.to(camera.position, {
+					x: heavenlyBodies[i].x,
+					y: 5,
+					duration: 3,
+				});
+				controls.target.set(thisBody.x, thisBody.y, thisBody.z);
+				break;
+			}
+		}
+	}
 
-  if (e.key === "ArrowLeft") {
-    for (let i = 0; i < heavenlyBodies.length; i++) {
-      const thisBody = heavenlyBodies[i];
-      if (thisBody.x < controls.target.x) {
-        gsap.to(camera.position, {
-          x: heavenlyBodies[i].x + 10,
-          y: 5,
-          duration: 3,
-        });
-        controls.target.set(thisBody.x, thisBody.y, thisBody.z);
-        break;
-      }
-    }
-  }
+	if (e.key === "ArrowLeft") {
+		for (let i = 0; i < heavenlyBodies.length; i++) {
+			const thisBody = heavenlyBodies[i];
+			if (thisBody.x < controls.target.x) {
+				gsap.to(camera.position, {
+					x: heavenlyBodies[i].x + 10,
+					y: 5,
+					duration: 3,
+				});
+				controls.target.set(thisBody.x, thisBody.y, thisBody.z);
+				break;
+			}
+		}
+	}
 });
 
 const renderPass = new POSTPROCESSING.RenderPass(scene, camera);
@@ -190,23 +190,23 @@ composer.addPass(renderPass);
 composer.addPass(effectPass);
 
 scene.add(
-  directionalLight,
-  directionalLight.target,
-  // gridHelper,
-  ambientLight
+	directionalLight,
+	directionalLight.target,
+	// gridHelper,
+	ambientLight
 );
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function addStars() {
-  const starGeometry = new THREE.SphereGeometry(0.2, 24, 24);
-  const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const star = new THREE.Mesh(starGeometry, starMaterial);
+	const starGeometry = new THREE.SphereGeometry(0.2, 24, 24);
+	const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+	const star = new THREE.Mesh(starGeometry, starMaterial);
 
-  const [x, y, z] = Array(3)
-    .fill()
-    .map(() => THREE.MathUtils.randFloatSpread(500));
-  star.position.set(x, y, z);
-  scene.add(star);
+	const [x, y, z] = Array(3)
+		.fill()
+		.map(() => THREE.MathUtils.randFloatSpread(500));
+	star.position.set(x, y, z);
+	scene.add(star);
 }
 
 Array(500).fill().forEach(addStars);
@@ -218,8 +218,8 @@ const moonTexture = new THREE.TextureLoader().load(moonTextureMap);
 const moonSurfaceTexture = new THREE.TextureLoader().load(moonSurfaceMap);
 
 const moonmaterial = new THREE.MeshStandardMaterial({
-  map: moonTexture,
-  normalMap: moonSurfaceTexture,
+	map: moonTexture,
+	normalMap: moonSurfaceTexture,
 });
 const moon = new THREE.Mesh(moongeometry, moonmaterial);
 const moonObj = new THREE.Object3D();
@@ -234,21 +234,21 @@ scene.add(moonObj);
 let satellite = null;
 const loader = new GLTFLoader();
 loader.load(
-  satelliteModel,
-  function (gltf) {
-    satellite = gltf.scene;
-    satellite.position.set(-5, 5, 10);
-    satellite.rotation.y = 180;
-    satellite.scale.y = 0.1;
-    satellite.scale.z = 0.1;
-    satellite.scale.x = 0.1;
+	satelliteModel,
+	function (gltf) {
+		satellite = gltf.scene;
+		satellite.position.set(-5, 5, 10);
+		satellite.rotation.y = 180;
+		satellite.scale.y = 0.1;
+		satellite.scale.z = 0.1;
+		satellite.scale.x = 0.1;
 
-    scene.add(satellite);
-  },
-  undefined,
-  function (error) {
-    console.error(error);
-  }
+		scene.add(satellite);
+	},
+	undefined,
+	function (error) {
+		console.error(error);
+	}
 );
 
 // Controls
@@ -301,36 +301,45 @@ wireframeFolder.add(jupiter.material, "wireframe").name("Jupiter");
 wireframeFolder.add(uranus.material, "wireframe").name("Uranus");
 wireframeFolder.add(neptune.material, "wireframe").name("Neptune");
 
+console.log(scene);
+scene.traverse((child) => {
+	if (child.isMesh) {
+		child.scale.x = 0.5;
+		child.scale.z = 0.5;
+		child.scale.y = 0.5;
+	}
+});
+
 let t = 0;
 function animate() {
-  t += 0.005;
-  composer.render(0.1);
-  requestAnimationFrame(animate);
-  earth.rotation.y += 0.005;
-  mercury.rotation.y += 0.005;
-  venus.rotation.y += 0.005;
-  mars.rotation.y += 0.005;
-  jupiter.rotation.y += 0.001;
-  uranus.rotation.y += 0.001;
-  neptune.rotation.y += 0.001;
+	t += 0.005;
+	composer.render(0.1);
+	requestAnimationFrame(animate);
+	earth.rotation.y += 0.005;
+	mercury.rotation.y += 0.005;
+	venus.rotation.y += 0.005;
+	mars.rotation.y += 0.005;
+	jupiter.rotation.y += 0.001;
+	uranus.rotation.y += 0.001;
+	neptune.rotation.y += 0.001;
 
-  clouds.rotation.x += 0.0005;
-  clouds.rotation.y += 0.006;
+	clouds.rotation.x += 0.0005;
+	clouds.rotation.y += 0.006;
 
-  moon.rotation.y += 0.008;
-  moonObj.rotation.y += 0.008;
+	moon.rotation.y += 0.008;
+	moonObj.rotation.y += 0.008;
 
-  satellite.position.x = 10 * Math.cos(1 * t);
-  satellite.position.z = 10 * Math.sin(1 * t);
-  satellite.position.y = 10 * Math.cos(1 * t);
-  satellite.rotation.y += 0.0005;
+	satellite.position.x = 10 * Math.cos(1 * t);
+	satellite.position.z = 10 * Math.sin(1 * t);
+	satellite.position.y = 10 * Math.cos(1 * t);
+	satellite.rotation.y += 0.0005;
 
-  if (controls.target.x === 0 && controls.target.y === 0) {
-    camera.position.x -= 0.01;
-    camera.rotation.x += 0.01;
-  }
-  controls.update();
-  renderer.render(scene, camera);
+	if (controls.target.x === 0 && controls.target.y === 0) {
+		camera.position.x -= 0.01;
+		camera.rotation.x += 0.01;
+	}
+	controls.update();
+	renderer.render(scene, camera);
 }
 
 animate();
