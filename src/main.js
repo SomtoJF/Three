@@ -36,21 +36,45 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-camera.position.setZ(50);
+camera.position.setZ(100);
 
 // PLANETS
-const heavenlyBodies = [
-	{ name: "Mercury", x: 100, y: 5, z: 0 },
-	{ name: "Venus", x: 50, y: 5, z: 0 },
-	{ name: "Earth", x: 0, y: 0, z: 0 },
-	{ name: "Mars", x: -50, y: 5, z: 0 },
-	{ name: "Jupiter", x: -150, y: 5, z: 0 },
-	{ name: "Saturn", x: -250, y: 0, z: 0 },
-	{ name: "Uranus", x: -350, y: 0, z: 0 },
-	{ name: "Neptune", x: -400, y: 0, z: 0 },
-];
+// const heavenlyBodies = [
+// 	{ name: "Mercury", x: 100, y: 5, z: 0 },
+// 	{ name: "Venus", x: 50, y: 5, z: 0 },
+// 	{ name: "Earth", x: 0, y: 0, z: 0 },
+// 	{ name: "Mars", x: -50, y: 5, z: 0 },
+// 	{ name: "Jupiter", x: -150, y: 5, z: 0 },
+// 	{ name: "Saturn", x: -250, y: 0, z: 0 },
+// 	{ name: "Uranus", x: -350, y: 0, z: 0 },
+// 	{ name: "Neptune", x: -400, y: 0, z: 0 },
+// ];
+
+// Create the sun
+const sunTexture = new THREE.TextureLoader().load(suntextureMap);
+const sun = new THREE.Mesh(
+	new THREE.SphereGeometry(50, 60, 60),
+	new THREE.MeshBasicMaterial({
+		color: 0xfdb813,
+		visible: true,
+		lightMapIntensity: 1.3,
+		map: sunTexture,
+	})
+);
+scene.add(sun);
+
+const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
+	resolutionScale: 0.5,
+	density: 0.6,
+	decay: 0.95,
+	weight: 0.9,
+	samples: 100,
+});
 
 // Instantiate new earth geometry which represents shapes
+const earthPlacer = new THREE.Object3D();
+sun.add(earthPlacer);
+
 const geometry = new THREE.SphereGeometry(9, 50, 50);
 const earthTexture = new THREE.TextureLoader().load(earthTextureMap);
 const earthSurface = new THREE.TextureLoader().load(
@@ -68,29 +92,52 @@ const earth = new THREE.Mesh(geometry, material);
 earth.receiveShadow = true;
 earth.castShadow = true;
 
+// Create spere geometry to hold the clouds
+const cloudsTexture = new THREE.TextureLoader().load(cloudstextureMap);
+const clouds = new THREE.Mesh(
+	new THREE.SphereGeometry(9.1, 60, 60),
+	new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
+);
+
 const mercury = createMercury();
-mercury.position.set(100, 5, 0);
+const mercuryPlacer = new THREE.Object3D();
+scene.add(mercuryPlacer);
+mercuryPlacer.add(mercury);
+mercury.position.set(-50, 0, 0);
 
 const venus = createVenus();
-venus.position.set(50, 5, 0);
+const venusPlacer = new THREE.Object3D();
+scene.add(venusPlacer);
+venusPlacer.add(venus);
+venus.position.set(-60, 0, 0);
+
+earthPlacer.add(earth);
+earth.add(clouds);
+earth.position.set(-150, 0, 0);
 
 const mars = createMars();
-mars.position.set(-50, 5, 0);
+const marsPlacer = new THREE.Object3D();
+scene.add(marsPlacer);
+marsPlacer.add(mars);
+mars.position.set(-110, 0, 0);
 
 const jupiter = createJupiter();
-jupiter.position.set(-150, 5, 0);
+const jupiterPlacer = new THREE.Object3D();
+jupiterPlacer.add(jupiter);
+jupiter.position.set(-150, 0, 0);
 
 let saturn = null;
+const saturnPlacer = new THREE.Object3D();
 const saturnLoader = new GLTFLoader();
 saturnLoader.load(
 	saturnModel,
 	function (gltf) {
 		saturn = gltf.scene;
-		saturn.position.set(-250, 0, 0);
-		saturn.scale.y = 0.04;
-		saturn.scale.z = 0.04;
-		saturn.scale.x = 0.04;
-		scene.add(saturn);
+		saturn.position.set(-200, 0, 0);
+		saturn.scale.y = 0.025;
+		saturn.scale.z = 0.025;
+		saturn.scale.x = 0.025;
+		saturnPlacer.add(saturn);
 
 		const saturnFolder = planetSizeFolder.addFolder("Saturn");
 		saturnFolder.add(saturn.scale, "x", 0, 0.1, 0.01);
@@ -104,19 +151,15 @@ saturnLoader.load(
 );
 
 const uranus = createUranus();
-uranus.position.set(-350, 0, 0);
+const uranusPlacer = new THREE.Object3D();
+uranusPlacer.add(uranus);
+uranus.position.set(-240, 0, 0);
 
 const neptune = createNeptune();
-neptune.position.set(-400, 0, 0);
-scene.add(earth, mercury, venus, mars, jupiter, uranus, neptune);
-
-// Create spere geometry to hold the clouds
-const cloudsTexture = new THREE.TextureLoader().load(cloudstextureMap);
-const clouds = new THREE.Mesh(
-	new THREE.SphereGeometry(9.1, 60, 60),
-	new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
-);
-scene.add(clouds);
+const neptunePlacer = new THREE.Object3D();
+neptunePlacer.add(neptune);
+neptune.position.set(-290, 0, 0);
+scene.add(jupiterPlacer, saturnPlacer, uranusPlacer, neptunePlacer);
 
 // Instantiate the pointlight and set its position on the x,y and z axes
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -125,62 +168,6 @@ directionalLight.target.position.set(0, 0, 0);
 directionalLight.castShadow = true;
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
-const gridHelper = new THREE.GridHelper(200, 50);
-
-// Create the sun
-const sunTexture = new THREE.TextureLoader().load(suntextureMap);
-const sun = new THREE.Mesh(
-	new THREE.SphereGeometry(50, 60, 60),
-	new THREE.MeshBasicMaterial({
-		color: 0xfdb813,
-		visible: true,
-		lightMapIntensity: 1.3,
-		map: sunTexture,
-	})
-);
-sun.position.set(300, 5, 0);
-scene.add(sun);
-
-const godRaysEffect = new POSTPROCESSING.GodRaysEffect(camera, sun, {
-	resolutionScale: 0.5,
-	density: 0.6,
-	decay: 0.95,
-	weight: 0.9,
-	samples: 100,
-});
-
-window.addEventListener("keyup", (e) => {
-	console.log(e.key);
-	if (e.key === "ArrowRight") {
-		for (let i = heavenlyBodies.length - 1; i >= 0; i--) {
-			const thisBody = heavenlyBodies[i];
-			if (thisBody.x > controls.target.x) {
-				gsap.to(camera.position, {
-					x: heavenlyBodies[i].x,
-					y: 5,
-					duration: 3,
-				});
-				controls.target.set(thisBody.x, thisBody.y, thisBody.z);
-				break;
-			}
-		}
-	}
-
-	if (e.key === "ArrowLeft") {
-		for (let i = 0; i < heavenlyBodies.length; i++) {
-			const thisBody = heavenlyBodies[i];
-			if (thisBody.x < controls.target.x) {
-				gsap.to(camera.position, {
-					x: heavenlyBodies[i].x + 10,
-					y: 5,
-					duration: 3,
-				});
-				controls.target.set(thisBody.x, thisBody.y, thisBody.z);
-				break;
-			}
-		}
-	}
-});
 
 const renderPass = new POSTPROCESSING.RenderPass(scene, camera);
 const effectPass = new POSTPROCESSING.EffectPass(camera, godRaysEffect);
@@ -189,12 +176,7 @@ const composer = new POSTPROCESSING.EffectComposer(renderer);
 composer.addPass(renderPass);
 composer.addPass(effectPass);
 
-scene.add(
-	directionalLight,
-	directionalLight.target,
-	// gridHelper,
-	ambientLight
-);
+scene.add(directionalLight, directionalLight.target, ambientLight);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function addStars() {
@@ -310,11 +292,23 @@ scene.traverse((child) => {
 	}
 });
 
+const revolvePlanets = (number) => {
+	earthPlacer.rotation.y += number;
+	mercuryPlacer.rotation.y += number * 4;
+	venusPlacer.rotation.y += number * 1.6;
+	marsPlacer.rotation.y += number * 0.5;
+	jupiterPlacer.rotation.y += number / 11.9;
+	saturnPlacer.rotation.y += number / 29;
+	uranusPlacer.rotation.y += number / 84;
+	neptunePlacer.rotation.y += number / 164;
+};
+
 let t = 0;
 function animate() {
 	t += 0.005;
 	composer.render(0.1);
 	requestAnimationFrame(animate);
+	revolvePlanets(0.009);
 	earth.rotation.y += 0.005;
 	mercury.rotation.y += 0.005;
 	venus.rotation.y += 0.005;
